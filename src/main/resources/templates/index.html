@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Интернет-магазин</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #333; }
+        .nav a { margin-right: 16px; color: #0066cc; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Интернет-магазин</h1>
+    <nav class="nav">
+        <a th:href="@{/products}">Товары</a>
+        <a th:href="@{/h2-console}">База данных</a>
+    </nav>
+    <p>Добро пожаловать в систему управления интернет-магазином.</p>
+</body>
+</html>
