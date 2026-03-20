@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Заказы</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f5f5f5; }
+        .nav a { margin-right: 16px; color: #0066cc; text-decoration: none; }
+        .status-new        { color: #0066cc; font-weight: bold; }
+        .status-processing { color: #ff9900; font-weight: bold; }
+        .status-delivered  { color: green;   font-weight: bold; }
+        .status-cancelled  { color: red;     font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a th:href="@{/}">Главная</a>
+        <a th:href="@{/products}">Товары</a>
+        <a th:href="@{/users}">Пользователи</a>
+        <a th:href="@{/orders}">Заказы</a>
+    </nav>
+    <h1>Заказы</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Дата</th>
+                <th>Пользователь</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+                <th>Оплата</th>
+                <th>Доставка</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="o : ${orders}">
+                <td th:text="${o.id}"/>
+                <td th:text="${#temporals.format(o.orderDate, 'dd.MM.yyyy HH:mm')}"/>
+                <td th:text="${o.user.fullName}"/>
+                <td>
+                    <span th:text="${o.status}"
+                          th:class="'status-' + ${o.status}"/>
+                </td>
+                <td th:text="${o.totalAmount} + ' ₸'"/>
+                <td th:text="${o.paymentMethod}"/>
+                <td th:text="${o.deliveryMethod}"/>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
