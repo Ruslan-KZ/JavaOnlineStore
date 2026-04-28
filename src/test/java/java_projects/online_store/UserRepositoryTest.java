@@ -5,14 +5,16 @@ import java_projects.online_store.repository.UserRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class UserRepositoryTest {
 
     @Autowired
@@ -31,9 +33,7 @@ class UserRepositoryTest {
     @Test
     void save_andFindById_works() {
         User saved = userRepository.save(buildUser("a@test.com"));
-
         Optional<User> found = userRepository.findById(saved.getId());
-
         assertTrue(found.isPresent());
         assertEquals("a@test.com", found.get().getEmail());
     }
@@ -41,9 +41,7 @@ class UserRepositoryTest {
     @Test
     void findByEmail_existingEmail_returnsUser() {
         userRepository.save(buildUser("b@test.com"));
-
         Optional<User> found = userRepository.findByEmail("b@test.com");
-
         assertTrue(found.isPresent());
         assertEquals("b@test.com", found.get().getEmail());
     }
@@ -58,7 +56,6 @@ class UserRepositoryTest {
     void delete_removesUser() {
         User saved = userRepository.save(buildUser("c@test.com"));
         userRepository.deleteById(saved.getId());
-
         Optional<User> found = userRepository.findById(saved.getId());
         assertFalse(found.isPresent());
     }

@@ -38,7 +38,11 @@ public class UserService {
     }
 
     public User update(Long id, User updated) {
-        return null;
+        User user = userRepository.findById(id).orElseThrow();
+        user.setFullName(updated.getFullName());
+        user.setPhone(updated.getPhone());
+        user.setStatus(updated.getStatus());
+        return userRepository.save(user);
     }
 
     public void delete(Long id) {
@@ -48,7 +52,7 @@ public class UserService {
     public AuthResponse register(AuthRequest req) {
         User user = new User();
         user.setEmail(req.getEmail());
-        user.setFullName(req.getEmail());
+        user.setFullName(req.getFullName() != null ? req.getFullName() : req.getEmail());
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         user.setStatus("active");
         user.setRegistrationDate(LocalDateTime.now()); // ← исправлено

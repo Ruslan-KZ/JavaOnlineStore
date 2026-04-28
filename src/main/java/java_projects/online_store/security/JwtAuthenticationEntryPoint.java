@@ -16,11 +16,16 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        String tokenError = (String) request.getAttribute("token_error");
+        // String path = request.getRequestURI();
 
+        // if (path.startsWith("/h2-console")) {
+        //     response.sendRedirect("/h2-console/login.jsp");
+        //     return;
+        // }
+
+        String tokenError = (String) request.getAttribute("token_error");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-
         String message = "token_expired".equals(tokenError) ? "Token expired" : "Unauthorized";
         response.getWriter().write("{\"error\": \"" + message + "\"}");
     }

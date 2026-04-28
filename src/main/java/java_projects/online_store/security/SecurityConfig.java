@@ -3,6 +3,7 @@ package java_projects.online_store.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+// import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -27,18 +28,32 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .headers(headers -> headers.frameOptions(f -> f.disable()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(authEntryPoint)
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+    // @Bean
+    //     @Order(1)
+    //     public SecurityFilterChain h2FilterChain(HttpSecurity http) throws Exception {
+    //         http
+    //             .securityMatcher("/h2-console/**")
+    //             .csrf(csrf -> csrf.disable())
+    //             .headers(headers -> headers.frameOptions(f -> f.disable()))
+    //             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+    //         return http.build();
+    //     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

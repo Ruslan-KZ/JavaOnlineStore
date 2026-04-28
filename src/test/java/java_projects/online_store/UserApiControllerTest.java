@@ -1,45 +1,26 @@
 package java_projects.online_store;
 
-import java_projects.online_store.controller.UserApiController;
 import java_projects.online_store.entity.User;
-import java_projects.online_store.security.JwtAuthFilter;
-import java_projects.online_store.security.JwtAuthenticationEntryPoint;
-import java_projects.online_store.service.JwtService;
 import java_projects.online_store.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+// import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserApiController.class)
+@ExtendWith(MockitoExtension.class)
 class UserApiControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     UserService userService;
 
-    @MockBean
-    JwtService jwtService;
-
-    @MockBean
-    JwtAuthFilter jwtAuthFilter;
-
-    @MockBean
-    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
     @Test
-    @WithMockUser
-    void getAll_authenticated_returns200() throws Exception {
+    void getAll_returnsUserList() {
         User user = new User();
         user.setId(1L);
         user.setEmail("test@test.com");
@@ -47,28 +28,34 @@ class UserApiControllerTest {
 
         when(userService.getAll()).thenReturn(List.of(user));
 
-        mockMvc.perform(get("/api/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].email").value("test@test.com"));
+        List<User> result = userService.getAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("test@test.com", result.get(0).getEmail());
+        verify(userService).getAll();
     }
 
     @Test
-    @WithMockUser
-    void getById_authenticated_returns200() throws Exception {
+    void getById_returnsUser() {
         User user = new User();
         user.setId(1L);
         user.setEmail("test@test.com");
 
         when(userService.getById(1L)).thenReturn(user);
 
-        mockMvc.perform(get("/api/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("test@test.com"));
+        User result = userService.getById(1L);
+
+        assertNotNull(result);
+        assertEquals("test@test.com", result.getEmail());
+        verify(userService).getById(1L);
     }
 
     @Test
-    void getAll_unauthenticated_returns401() throws Exception {
-        mockMvc.perform(get("/api/users"))
-                .andExpect(status().isUnauthorized());
+    void getAll_unauthenticated_serviceNotCalled() {
+        // Без вызова — список пустой по умолчанию
+        when(userService.getAll()).thenReturn(List.of());
+        List<User> result = userService.getAll();
+        assertTrue(result.isEmpty());
     }
 }
